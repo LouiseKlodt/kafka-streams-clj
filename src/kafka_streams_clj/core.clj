@@ -17,25 +17,22 @@
 (def topology
   (let [builder (new StreamsBuilder)
         stream-a (.stream builder "topic-a")
-        stream-b (.stream builder "topic-b")]
+        _ (.to stream-a "topic-b")]
     builder))
 
 (def streams
   (new KafkaStreams (.build topology) (streams-config)))
 
-
-(defn -main
-  "I don't do a whole lot ... yet."
-  [& args]
-  (println "Hello, World!"))
+(defn -main [& args]
+  (println "Starting Kafka Streams app")
+  (.start streams)
+  (.addShutdownHook (Runtime/getRuntime)
+                    (Thread. (fn []
+                               (println "Shutting down Kafka Streams app")
+                               (.close streams)))))
 
 
 (comment
-
-  (.start streams)
-  (.close streams)
-
-
 
 
   42)
