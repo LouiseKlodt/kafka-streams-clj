@@ -14,10 +14,10 @@ Clone this repo. You need Docker and Leiningen installed.
 ## Example Usage Flow
 
 1. Start the Kafka and Zookeper containers via Docker: `$ docker-compose up`
-2. Create the two topics required for the example streams application - a simple topology which copies any messages sent to `topic-a`  to `topic-b`. Run: `$ docker exec broker kafka-topics --create --topic topic-a --bootstrap-server localhost:9092`. 
-3. Once the topics are created, you can start the kafka streams app by running `lein run` from the terminal.
-4. Produce some messages to `topic-a` (see below broker commands)
-5. Check messages are copied to `topic-b` (see below broker commands)
+2. Create the two topics required for the example streams application, a simple topology which copies any messages sent to `topic-a`  to `topic-b`. Run: `$ docker exec broker kafka-topics --create --topic topic-a --bootstrap-server localhost:9092`. 
+3. Once the topics are created, you can start the kafka streams app: `$ lein run`.
+4. Produce some messages to `topic-a` (see below producer command)
+5. Check messages are copied to `topic-b` (see below consumer command)
 
 To run the `broker` commands inside the container, run: `$ docker exec -it broker bash` and execute below commands from within the container.
 
