@@ -1,33 +1,40 @@
 # kafka-streams-clj
 
-FIXME: description
+Kafka Streams Examples in Clojure using Java Interop and Docker.
 
 ## Installation
 
-Download from http://example.com/FIXME.
+Clone this repo. You need Docker and Leiningen installed.
 
 ## Usage
 
-FIXME: explanation
-
     $ java -jar kafka-streams-clj-0.1.0-standalone.jar [args]
 
-## Options
-
-FIXME: listing of options this app accepts.
 
 ## Examples
 
-...
+### Docker
 
-### Bugs
+To start the Kafka and Zookeper containers, run: `$ docker-compose up`
 
-...
+To create the topics, run: `$ docker exec broker kafka-topics --create --topic topic-a --bootstrap-server localhost:9092`
 
-### Any Other Sections
-### That You Think
-### Might be Useful
+Or run the commands inside the container, run: `$ docker exec -it broker bash`
 
+Commands:
+
+List topics:
+```sh
+kafka-topics --list --bootstrap-server localhost:9092
+```
+Consume from topic:
+```sh
+kafka-console-consumer --topic topic-a --from-beginning --bootstrap-server localhost:9092
+```
+Produce to topic:
+```sh
+kafka-console-producer --topic topic-a --bootstrap-server localhost:9092
+```
 ## License
 
 Copyright © 2024 FIXME

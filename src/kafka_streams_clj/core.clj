@@ -10,9 +10,8 @@
     (new Properties)
     (.put StreamsConfig/APPLICATION_ID_CONFIG "example-app-id")
     (.put StreamsConfig/BOOTSTRAP_SERVERS_CONFIG "localhost:9092")
-    (.put StreamsConfig/DEFAULT_KEY_SERDE_CLASS_CONFIG (.getClass (Serdes/String)))
-    (.put StreamsConfig/DEFAULT_VALUE_SERDE_CLASS_CONFIG (.getClass (Serdes/String)))))
-
+    (.put StreamsConfig/DEFAULT_KEY_SERDE_CLASS_CONFIG (.getName (.getClass (Serdes/String))))
+    (.put StreamsConfig/DEFAULT_VALUE_SERDE_CLASS_CONFIG (.getName (.getClass (Serdes/String))))))
 
 (def topology
   (let [builder (new StreamsBuilder)
@@ -29,10 +28,15 @@
   (.addShutdownHook (Runtime/getRuntime)
                     (Thread. (fn []
                                (println "Shutting down Kafka Streams app")
-                               (.close streams)))))
+                               (.close streams))))
+  (while true
+    (println "I am still running...")
+    (Thread/sleep 5000)))
 
 
 (comment
+
+  (.getClass (Serdes/String))
 
 
   42)
