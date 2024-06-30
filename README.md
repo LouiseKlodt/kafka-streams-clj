@@ -14,17 +14,16 @@ Clone this repo. You need Docker and Leiningen installed.
 ## Example Usage Flow
 
 1. Start the Kafka and Zookeper containers via Docker: `$ docker-compose up`
-2. Create the two topics required for the example streams application, a simple topology which copies any messages sent to `topic-a`  to `topic-b`. Run: `$ docker exec broker kafka-topics --create --topic topic-a --bootstrap-server localhost:9092`. 
+2. Create the topics required for the example streams application, a simple topology which performs a left join on `topic-a` with `topic-b` and writes the joined result to `output-topic`. Run: `$ docker exec broker kafka-topics --create --topic <topic-name> --bootstrap-server localhost:9092` for the 3 topics mentioned above.
 3. Once the topics are created, you can start the kafka streams app: `$ lein run`.
-4. Produce some messages to `topic-a` (see below producer command)
-5. Check messages are copied to `topic-b` (see below consumer command)
+4. Produce some messages to `topic-a` and `topic-b` using the same record key, as this is what will be joined on (see below producer command)
+5. Check messages are joined and written to `output-topic` (see below consumer command)
 
 To run the `broker` commands inside the container, run: `$ docker exec -it broker bash` and execute below commands from within the container.
 
 Create topics:
 ```sh
-kafka-topics --create --topic topic-a --bootstrap-server localhost:9092
-kafka-topics --create --topic topic-b --bootstrap-server localhost:9092
+kafka-topics --create --topic <topic-name> --bootstrap-server localhost:9092
 ```
 
 List topics:
@@ -33,14 +32,13 @@ kafka-topics --list --bootstrap-server localhost:9092
 ```
 Consume from topic:
 ```sh
-kafka-console-consumer --topic topic-b --from-beginning --bootstrap-server localhost:9092
+kafka-console-consumer --topic <topic-name> --from-beginning --bootstrap-server localhost:9092 --property print.key=true --property "key.separator=:"
 ```
 Produce to topic:
 ```sh
-kafka-console-producer --topic topic-a --bootstrap-server localhost:9092
+kafka-console-producer --topic <topic-name> --bootstrap-server localhost:9092 --property "parse.key=true" --property "key.separator=:"
 ```
 
-Any message from topic-a should appear as a copy in topic-b.
 ## License
 
 Copyright © 2024 FIXME

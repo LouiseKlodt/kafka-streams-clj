@@ -1,42 +1,22 @@
 (ns kafka-streams-clj.core
-  (:gen-class)
+  (:require
+    [kafka-streams-clj.config :refer [streams-config]]
+    [kafka-streams-clj.left-join :as left-join])
   (:import
-    (java.util Properties)
-    (org.apache.kafka.common.serialization Serdes)
-    (org.apache.kafka.streams KafkaStreams StreamsBuilder StreamsConfig)))
+    (org.apache.kafka.streams KafkaStreams))
+  (:gen-class))
 
-(defn streams-config []
-  (doto
-    (new Properties)
-    (.put StreamsConfig/APPLICATION_ID_CONFIG "example-app-id")
-    (.put StreamsConfig/BOOTSTRAP_SERVERS_CONFIG "localhost:9092")
-    (.put StreamsConfig/DEFAULT_KEY_SERDE_CLASS_CONFIG (.getName (.getClass (Serdes/String))))
-    (.put StreamsConfig/DEFAULT_VALUE_SERDE_CLASS_CONFIG (.getName (.getClass (Serdes/String))))))
-
-(def topology
-  (let [builder (new StreamsBuilder)
-        stream-a (.stream builder "topic-a")
-        _ (.to stream-a "topic-b")]
-    builder))
-
-(def streams
-  (new KafkaStreams (.build topology) (streams-config)))
+(defn streams [topology]
+  (new KafkaStreams (.build topology) streams-config))
 
 (defn -main [& args]
-  (println "Starting Kafka Streams app")
-  (.start streams)
-  (.addShutdownHook (Runtime/getRuntime)
-                    (Thread. (fn []
-                               (println "Shutting down Kafka Streams app")
-                               (.close streams))))
-  (while true
-    (println "I am still running...")
-    (Thread/sleep 5000)))
-
-
-(comment
-
-  (.getClass (Serdes/String))
-
-
-  42)
+  (let [streams (streams left-join/topology)]
+    (println "Starting Kafka Streams app")
+    (.start streams)
+    (.addShutdownHook (Runtime/getRuntime)
+                      (Thread. (fn []
+                                 (println "Closing Kafka Streams app")
+                                 (.close streams))))
+    (while true
+      (println "still running...")
+      (Thread/sleep 5000))))
